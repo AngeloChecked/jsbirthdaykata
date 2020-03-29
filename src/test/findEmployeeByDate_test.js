@@ -19,10 +19,9 @@ const {serializeLineToEmployee} = require('../main/BirthdayService');
             ]);
         });
 
-        it('should return employee form linestring', async () => {
+        it('should return employee from line string', async () => {
             let employee = serializeLineToEmployee('Doe, John, 1982/10/08, john.doe@foobar.com', ['lastName','firstName','dateOfBirth','email']);
                             
-
             assert.deepEqual(employee, {
                 lastName: "Doe",
                 firstName: "John", 
@@ -32,7 +31,6 @@ const {serializeLineToEmployee} = require('../main/BirthdayService');
         });
 
         xit('should return employee', () => {
-            
             let employee1 = findEmployeeByDate("1982/10/08");
             let employee2 = findEmployeeByDate("1975/09/11");
 
