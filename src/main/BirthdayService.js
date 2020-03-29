@@ -1,7 +1,7 @@
 const fs = require('fs');
 const readline = require('readline');
 const { fromEvent } = require('rxjs');
-const { scan, takeUntil, takeLast} = require('rxjs/operators');
+const { takeUntil, reduce } = require('rxjs/operators');
 
 module.exports = {
 
@@ -17,29 +17,21 @@ module.exports = {
         const readInterface = readline.createInterface(fs.createReadStream(fileNamePath));
         const source = fromEvent(readInterface, 'line');
         const end$ = fromEvent(readInterface, 'close');
-
         return new Promise((resolve,rejected) => 
             source.pipe(
-                scan((acc, curr) => { acc.push(curr); return acc; }, []),
                 takeUntil(end$),
-                takeLast(1)
+                reduce((acc, curr) => { acc.push(curr); return acc; }, []),
             ).subscribe(lastAccumulateValue => resolve(lastAccumulateValue))
         );
     },
-    serializeLineToEmployee: (line, valueNames) =>{
-        let employeeValues = line.split(',')
-                .map(value => value.trim());
-
-
-                
-
-
-        let map = valueNames.reduce((acc, value, index) => {
-            acc[value] = employeeValues[index];
-            return acc;
-        },{});
-
-        return map;
+    serializeLineToEmployee: (line, valueNames) => {
+        let employeeValues = line
+            .split(',')
+            .map(value => value.trim());
+        return valueNames
+            .reduce((acc, name, index) => {
+                acc[name] = employeeValues[index];
+                return acc;
+            },{});
     }
-
 };
